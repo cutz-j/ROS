@@ -1,0 +1,102 @@
+[Darknet_ROS]
+[LibrealSense]
+[RealSense_ROS]
+
+[1. DarkNet ROS 설치] https://github.com/leggedrobotics/darknet_ros
+cd catkin_ws/src
+git clone --recursive https://github.com/leggedrobotics/darknet_ros.git
+cd ../
+catkin_make -DCMAKE_BUILD_TYPE=Release
+
+## weight / cfg 내려받기 ##
+cd src/darknet_ros/darknet_ros/yolo_network_config/cfg
+#cfg 내려받기
+cd ../weights
+#weights 내려받기
+
+## configure 수정 ##
+cd ../../../darknet_ros/darknet
+sudo gedit Makefile
+
+# 수정
+GPU = 1
+CUDNN = 1
+OPENCV = 1
+ARCH= 
+
+          -gencode arch=compute_62,code=[sm_62,compute_62] \
+
+## yaml 생성 ##
+cd ../darknet_ros/config
+sudo cp yolov3.yaml obj.yaml
+sudo gedit obj.yaml
+
+# 수정
+config_file:
+  name: obj.cfg                # cfg와 weight파일명으로 변경
+weight_file:
+  name: obj_90000.weights  # cfg와 weight파일명으로 변경
+
+detection_classes:
+   - suitcase --> door        # 수정
+
+## launch 수정 ##
+cd ../launch
+sudo gedit darknet_ros.launch
+
+# 수정
+<rosparam command="load" ns="darknet_ros" file="$(find darknet_ros)/config/obj.yaml"/>
+
+[2. Librealsense 설치] https://github.com/jetsonhacks/buildLibrealsense2TX
+cd /home/nvidia
+git clone https://github.com/jetsonhacks/buildLibrealsense2TX
+cd buildLibrealsense2TX
+./installLibrealsense.sh # realsense 분리
+# 완료 후 realsense 연결
+sudo nvpmodel -m 0
+cd /usr/local/bin
+./realsense-viewer
+
+[3. realsense2-ros 설치] https://github.com/IntelRealSense/realsense-ros
+cd /catkin_ws/src
+git clone https://github.com/IntelRealSense/realsense-ros
+catkin_init_workspace
+cd ..
+catkin_make clean
+catkin_make -DCTKIN_ENABLE_TESTING=False -DCMAKE_BUILD_TYPE=Release
+catkin_make install
+echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+
+### 노드 실행 ###
+roscore
+roslaunch realsense2_camera rs_rgbd.launch
+ctrl+alt+t
+rviz
+Fixed Frame 변경 --> camera_link
+add --> By topic --> infra2
+Image Topic --> color 확인 (/camera/color/image_raw) 복사
+
+
+ctrl+alt+t
+cd catkin_ws/src/darknet_ros/darknet_ros/config
+sudo gedit ros.yaml
+# 수정
+camera_reading:
+  topic: 위의 dir로 붙여넣기
+
+cd ../launch
+roslaunch darknet_ros.launch
+
+
+
+
+
+
+
+
+
+
+
+
+
