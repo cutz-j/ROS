@@ -1,0 +1,53 @@
+1. https://developer.qa.nvidia.com/embedded/downloads#?search=tensorflow
+ - Tensorflow for JetPack JP3.3
+ - tf_gpu-1.9.0+nv18.8-py3 (python3.5)
+ - tf_gpu-1.9.0+nv18.8-py2 (python2.7)
+
+2. pip 설치 
+- python3.5
+sudo apt-get install python3-pip
+sudo pip3 install -U -upgrade pip
+ # -U 중요
+
+- python2.7
+sudo apt-get install python-pip
+sudo pip install -U -upgrade pip
+
+3. pip lib 설치
+- python3.5
+sudo pip3 install -U enum34
+sudo pip3 install -U futures
+sudo pip3 install -U setuptool==36.0.1
+sudo pip3 install -U numpy
+sudo pip3 install -U grpcio
+
+- python2.7
+sudo pip install -U enum34
+sudo pip install -U futures
+sudo pip install -U setuptool==36.0.1
+sudo pip install -U numpy
+sudo pip install -U grpcio
+
+4. tf-gpu 설치
+
+cd ~/Downloads
+- python3.5
+sudo python3 -m pip install -U tensorflow-gpu-1.9.0+nv18.8-cp35-cp35mu-linux_aarch64.whl
+
+- python2.7
+sudo python -m pip install -U tensorflow-gpu-1.9.0+nv18.8-cp27-cp27mu-linux_aarch64.whl
+
+5. 설치 후 확인
+- python3.5
+python3
+import tensorflow as tf
+sess = tf.Session
+# gpu 인식
+sess.close()
+
+- python2.7
+python
+import tensorflow as tf
+sess = tf.Session
+# gpu 인식
+sess.close()
